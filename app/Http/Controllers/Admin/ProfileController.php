@@ -1,0 +1,3 @@
+<?php
+namespace App\Http\Controllers\Admin; use App\Http\Controllers\Controller; use Illuminate\Http\Request; use Illuminate\Support\Facades\Hash;
+class ProfileController extends Controller { public function edit(){return view('admin.profile.edit',['user'=>auth()->user()]);} public function update(Request $r){$data=$r->validate(['name'=>'required','email'=>'required|email','phone'=>'nullable']); auth()->user()->update($data); return back();} public function password(Request $r){$r->validate(['current_password'=>'required','password'=>'required|confirmed|min:8']); abort_unless(Hash::check($r->current_password,auth()->user()->password),422); auth()->user()->update(['password'=>Hash::make($r->password)]); return back();} }

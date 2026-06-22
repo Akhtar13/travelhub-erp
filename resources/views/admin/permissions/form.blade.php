@@ -1,0 +1,1 @@
+@extends('admin.layouts.master') @section('content')<form method="post" action="{{ $permission->exists ? route('admin.permissions.update',$permission) : route('admin.permissions.store') }}">@csrf @if($permission->exists)@method('PUT')@endif<input name="name" value="{{ old('name',$permission->name) }}"><button>Save</button></form>@endsection

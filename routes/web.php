@@ -1,7 +1,6 @@
 <?php
-
-use Illuminate\Support\Facades\Route;
-
-Route::get('/', function () {
-    return view('welcome');
-});
+use Illuminate\Support\Facades\Route; use App\Http\Controllers\Admin\{AuthController,DashboardController,UserController,RoleController,PermissionController,MasterDataController,CompanySettingController,ProfileController,ActivityLogController};
+Route::get('/', fn()=>redirect()->route('admin.dashboard'));
+Route::middleware('guest')->group(function(){ Route::get('/login',[AuthController::class,'loginForm'])->name('login'); Route::post('/login',[AuthController::class,'login']); Route::get('/forgot-password',[AuthController::class,'forgot'])->name('password.request'); Route::post('/forgot-password',[AuthController::class,'email'])->name('password.email'); Route::get('/reset-password/{token}',[AuthController::class,'reset'])->name('password.reset'); Route::post('/reset-password',[AuthController::class,'updatePassword'])->name('password.update'); });
+Route::post('/logout',[AuthController::class,'logout'])->middleware('auth')->name('logout');
+Route::prefix('admin')->name('admin.')->middleware('auth')->group(function(){ Route::get('/dashboard',DashboardController::class)->name('dashboard'); Route::resource('users',UserController::class); Route::resource('roles',RoleController::class); Route::resource('permissions',PermissionController::class); Route::get('master-data/{type}',[MasterDataController::class,'index'])->name('master-data.index'); Route::get('master-data/{type}/create',[MasterDataController::class,'create'])->name('master-data.create'); Route::post('master-data/{type}',[MasterDataController::class,'store'])->name('master-data.store'); Route::get('master-data/{type}/{id}/edit',[MasterDataController::class,'edit'])->name('master-data.edit'); Route::put('master-data/{type}/{id}',[MasterDataController::class,'update'])->name('master-data.update'); Route::delete('master-data/{type}/{id}',[MasterDataController::class,'destroy'])->name('master-data.destroy'); Route::get('company-settings',[CompanySettingController::class,'edit'])->name('company-settings.edit'); Route::put('company-settings',[CompanySettingController::class,'update'])->name('company-settings.update'); Route::get('profile',[ProfileController::class,'edit'])->name('profile.edit'); Route::put('profile',[ProfileController::class,'update'])->name('profile.update'); Route::put('profile/password',[ProfileController::class,'password'])->name('profile.password'); Route::get('activity-logs',[ActivityLogController::class,'index'])->name('activity-logs.index'); });

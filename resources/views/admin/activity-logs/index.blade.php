@@ -1,0 +1,1 @@
+@extends('admin.layouts.master') @section('content')<h1>Activity Logs</h1>@foreach($logs as $log)<p>{{ $log->created_at }} {{ $log->event }} {{ $log->description }}</p>@endforeach{{ $logs->links() }}@endsection

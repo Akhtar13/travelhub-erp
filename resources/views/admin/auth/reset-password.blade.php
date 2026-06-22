@@ -1,0 +1,1 @@
+<form method="post" action="{{ route('password.update') }}">@csrf <input type="hidden" name="token" value="{{ $token }}"><input name="email" type="email" required><input name="password" type="password" required><input name="password_confirmation" type="password" required><button>Reset</button></form>
