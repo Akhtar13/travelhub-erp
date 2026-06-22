@@ -24,6 +24,7 @@ class User extends Authenticatable
     }
 
     public function roles(): BelongsToMany { return $this->belongsToMany(Role::class, 'model_has_roles', 'model_id', 'role_id')->wherePivot('model_type', self::class); }
+    public function bookings(): \Illuminate\Database\Eloquent\Relations\HasMany { return $this->hasMany(Booking::class, 'created_by'); }
     public function permissions(): BelongsToMany { return $this->belongsToMany(Permission::class, 'model_has_permissions', 'model_id', 'permission_id')->wherePivot('model_type', self::class); }
     public function hasRole(string $role): bool { return $this->roles()->where('name', $role)->exists(); }
     public function hasPermissionTo(string $permission): bool { return $this->permissions()->where('name', $permission)->exists() || $this->roles()->whereHas('permissions', fn($q) => $q->where('name', $permission))->exists(); }

@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Requests\Admin;
+use Illuminate\Foundation\Http\FormRequest;
+class TravelRouteRequest extends FormRequest { public function authorize(): bool { return $this->user()->can('manage', \App\Models\TravelRoute::class); } public function rules(): array { return ['name'=>'required|max:255','origin_location_id'=>'required|exists:locations,id','destination_location_id'=>'required|exists:locations,id|different:origin_location_id','estimated_minutes'=>'required|integer|min:0','status'=>'required|in:active,inActive','stops'=>'array','stops.*.location_id'=>'nullable|exists:locations,id','stops.*.stop_order'=>'nullable|integer|min:1','stops.*.arrival_offset_minutes'=>'nullable|integer|min:0','stops.*.departure_offset_minutes'=>'nullable|integer|min:0','charges'=>'array','charges.*.name'=>'nullable|max:255','charges.*.amount'=>'nullable|numeric|min:0','charges.*.type'=>'nullable|max:50']; } }
