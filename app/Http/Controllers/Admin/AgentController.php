@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller; use App\Http\Requests\Admin\AgentRequest; use App\Models\{Agent,Currency}; use App\Services\Admin\AgentService;
+class AgentController extends Controller { public function index(){ return view('admin.agents.index',['agents'=>Agent::with('currency')->latest()->paginate(20)]); } public function create(){ return view('admin.agents.form',['agent'=>new Agent(),'currencies'=>Currency::all()]); } public function store(AgentRequest $r,AgentService $s){ $s->save($r->validated()); return redirect()->route('admin.agents.index'); } public function edit(Agent $agent){ return view('admin.agents.form',['agent'=>$agent,'currencies'=>Currency::all()]); } public function update(AgentRequest $r,Agent $agent,AgentService $s){ $s->save($r->validated(),$agent); return redirect()->route('admin.agents.index'); } public function destroy(Agent $agent){ $agent->delete(); return back(); } }
