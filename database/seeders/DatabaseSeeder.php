@@ -1,25 +1,4 @@
 <?php
-
 namespace Database\Seeders;
-
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-
-class DatabaseSeeder extends Seeder
-{
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
-    {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
-    }
-}
+use App\Models\{User,Role,Permission,Currency,Language,CompanySetting}; use Illuminate\Database\Seeder; use Illuminate\Support\Facades\Hash;
+class DatabaseSeeder extends Seeder { public function run(): void { $permissions=collect(['users.view','users.create','users.update','users.delete','roles.manage','permissions.manage','master-data.manage','settings.manage','activity-logs.view'])->map(fn($n)=>Permission::firstOrCreate(['name'=>$n],['guard_name'=>'web'])); $admin=Role::firstOrCreate(['name'=>'Super Admin'],['guard_name'=>'web']); $admin->permissions()->sync($permissions->pluck('id')); $user=User::firstOrCreate(['email'=>'admin@travelhub.test'],['name'=>'TravelHub Admin','password'=>Hash::make('password'),'status'=>'active']); $user->roles()->syncWithPivotValues([$admin->id],['model_type'=>User::class]); $usd=Currency::firstOrCreate(['code'=>'USD'],['name'=>'US Dollar','status'=>'active']); $en=Language::firstOrCreate(['code'=>'en'],['name'=>'English','status'=>'active']); CompanySetting::firstOrCreate(['company_name'=>'TravelHub ERP'],['email'=>'admin@travelhub.test','currency_id'=>$usd->id,'timezone'=>'UTC','language_id'=>$en->id]); } }

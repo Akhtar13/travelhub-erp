@@ -1,0 +1,1 @@
+<form method="post" action="{{ route('login') }}">@csrf <h1>Login</h1><input name="email" type="email" required><input name="password" type="password" required><label><input type="checkbox" name="remember"> Remember</label><button>Login</button><a href="{{ route('password.request') }}">Forgot password?</a></form>
