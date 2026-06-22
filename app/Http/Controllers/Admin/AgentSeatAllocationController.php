@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller; use App\Http\Requests\Admin\AgentSeatAllocationRequest; use App\Models\{Agent,AgentSeatAllocation,TravelSchedule}; use App\Services\Admin\AgentService;
+class AgentSeatAllocationController extends Controller { public function index(){ return view('admin.seat-allocations.index',['allocations'=>AgentSeatAllocation::with('agent','schedule.route')->paginate(20)]); } public function create(){ return view('admin.seat-allocations.form',['agents'=>Agent::where('status','active')->get(),'schedules'=>TravelSchedule::with('route')->where('status','scheduled')->get()]); } public function store(AgentSeatAllocationRequest $r,AgentService $s){ $s->allocateSeats($r->validated()); return redirect()->route('admin.seat-allocations.index'); } }

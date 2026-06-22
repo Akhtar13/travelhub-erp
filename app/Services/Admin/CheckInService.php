@@ -1,0 +1,4 @@
+<?php
+namespace App\Services\Admin;
+use App\Models\{Booking,CheckIn}; use Illuminate\Support\Facades\DB;
+class CheckInService { public function passengerList(int $scheduleId){ return Booking::with('passenger','seats','checkIn')->where('travel_schedule_id',$scheduleId)->where('status','confirmed')->get(); } public function scan(string $qr): Booking { return Booking::where('qr_code',$qr)->orWhere('pnr',$qr)->firstOrFail(); } public function checkIn(Booking $booking,float $exitFee=0,string $method='manual',?int $userId=null): CheckIn { return DB::transaction(fn()=>CheckIn::firstOrCreate(['booking_id'=>$booking->id,'travel_schedule_id'=>$booking->travel_schedule_id],['passenger_id'=>$booking->passenger_id,'checked_in_by'=>$userId,'checked_in_at'=>now(),'exit_fee'=>$exitFee,'method'=>$method,'status'=>'checked_in'])); } }

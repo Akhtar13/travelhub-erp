@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller; use App\Http\Requests\Admin\AgentRouteAssignmentRequest; use App\Models\{Agent,AgentRouteAssignment,TravelRoute}; use App\Services\Admin\AgentService;
+class AgentRouteAssignmentController extends Controller { public function index(){ return view('admin.agent-route-assignments.index',['assignments'=>AgentRouteAssignment::with('agent','route')->paginate(20)]); } public function create(){ return view('admin.agent-route-assignments.form',['agents'=>Agent::where('status','active')->get(),'routes'=>TravelRoute::where('status','active')->get()]); } public function store(AgentRouteAssignmentRequest $r,AgentService $s){ $s->assignRoute($r->validated()); return redirect()->route('admin.agent-route-assignments.index'); } public function destroy(AgentRouteAssignment $agent_route_assignment){ $agent_route_assignment->delete(); return back(); } }

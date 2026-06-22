@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers\Api;
+use App\Http\Controllers\Controller; use App\Models\PersonalAccessToken; use App\Models\User; use Illuminate\Http\Request; use Illuminate\Support\Facades\Hash; use Illuminate\Support\Str;
+class AuthController extends Controller { public function login(Request $r){ $data=$r->validate(['email'=>'required|email','password'=>'required']); $user=User::where('email',$data['email'])->first(); abort_unless($user && Hash::check($data['password'],$user->password),422,'Invalid credentials.'); $plain=Str::random(80); PersonalAccessToken::create(['tokenable_type'=>User::class,'tokenable_id'=>$user->id,'name'=>'api','token'=>hash('sha256',$plain),'abilities'=>'*']); return ['token'=>$plain,'token_type'=>'Bearer']; } public function logout(Request $r){ PersonalAccessToken::where('tokenable_id',$r->user()->id)->delete(); return ['message'=>'Logged out']; } }

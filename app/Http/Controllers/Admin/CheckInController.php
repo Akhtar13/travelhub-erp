@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller; use App\Http\Requests\Admin\CheckInRequest; use App\Models\{Booking,CheckIn,TravelSchedule}; use App\Services\Admin\CheckInService;
+class CheckInController extends Controller { public function index(CheckInService $s){ $scheduleId=request('travel_schedule_id'); return view('admin.check-ins.index',['schedules'=>TravelSchedule::with('route')->get(),'passengers'=>$scheduleId?$s->passengerList($scheduleId):collect(),'history'=>CheckIn::with('booking','passenger','schedule.route')->latest()->paginate(30)]); } public function store(CheckInRequest $r,CheckInService $s){ $booking=$r->qr ? $s->scan($r->qr) : Booking::findOrFail($r->booking_id); $s->checkIn($booking,$r->exit_fee ?? 0,$r->method ?? ($r->qr?'qr':'manual'),$r->user()->id); return back(); } }

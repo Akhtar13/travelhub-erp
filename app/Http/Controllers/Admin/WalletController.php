@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller; use App\Http\Requests\Admin\WalletTransactionRequest; use App\Models\{Agent,AgentWalletTransaction}; use App\Services\Admin\AgentService;
+class WalletController extends Controller { public function index(){ return view('admin.wallet.index',['agents'=>Agent::with('currency')->paginate(20),'transactions'=>AgentWalletTransaction::with('agent')->latest()->paginate(30)]); } public function credit(WalletTransactionRequest $r,Agent $agent,AgentService $s){ $s->credit($agent,$r->amount,$r->description ?? 'Manual credit',$r->user()->id); return back(); } public function debit(WalletTransactionRequest $r,Agent $agent,AgentService $s){ $s->debit($agent,$r->amount,$r->description ?? 'Manual debit',$r->user()->id); return back(); } }

@@ -1,0 +1,4 @@
+<?php
+namespace App\Services\Admin;
+use App\Models\{Agent,AgentWalletTransaction,Booking,Passenger};
+class ReportService { public function bookings(array $f=[]){ return Booking::with('agent','passenger','route')->when($f['from']??null,fn($q,$v)=>$q->whereDate('travel_date','>=',$v))->when($f['to']??null,fn($q,$v)=>$q->whereDate('travel_date','<=',$v))->latest()->paginate(50); } public function passengers(array $f=[]){ return Passenger::with('nationality')->latest()->paginate(50); } public function agents(array $f=[]){ return Agent::withCount('bookings')->withSum('bookings','total_amount')->paginate(50); } public function credits(array $f=[]){ return AgentWalletTransaction::with('agent')->latest()->paginate(50); } public function revenue(array $f=[]){ return Booking::selectRaw('status, count(*) as bookings, sum(total_amount) as revenue')->groupBy('status')->get(); } }
